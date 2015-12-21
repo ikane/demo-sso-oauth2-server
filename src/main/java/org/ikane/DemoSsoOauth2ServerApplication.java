@@ -107,6 +107,7 @@ public class DemoSsoOauth2ServerApplication extends WebMvcConfigurerAdapter {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http
+				.csrf().disable()
 				.formLogin()
 					.loginPage("/login").permitAll()
 				.and()
@@ -132,11 +133,12 @@ public class DemoSsoOauth2ServerApplication extends WebMvcConfigurerAdapter {
 				})
 				.permitAll();
 		}
-		
+		/*
 		@Bean
 	    public PasswordEncoder passwordEncoder() {
 	            return new BCryptPasswordEncoder();
 	    }
+	    */
 	}
 	
     @Configuration
@@ -166,14 +168,14 @@ public class DemoSsoOauth2ServerApplication extends WebMvcConfigurerAdapter {
 					.authorizedGrantTypes("authorization_code", "refresh_token", "password", "implicit")
 					.scopes("openid")
 					.autoApprove(true)
-					.redirectUris("http://localhost:8080")
+//					.redirectUris("http://localhost:8080")
 					;
 		}
 		
 		@Bean
 		public TokenStore tokenStore() {
-			//return new InMemoryTokenStore();
-			return new JdbcTokenStore(dataSource);
+			return new InMemoryTokenStore();
+//			return new JdbcTokenStore(dataSource);
 		}
 	}	
 }
