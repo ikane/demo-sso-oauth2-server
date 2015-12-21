@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,12 +52,12 @@ public class DemoSsoOauth2ServerApplication extends WebMvcConfigurerAdapter {
 	
 	//@Autowired
     //private TokenStore tokenStore;
-	
-	@RequestMapping("/user")
+	/*
+	@RequestMapping(value="/user", produces="application/json")
 	public Principal user(Principal user) {
 		return user;
 	}
-	
+	*/
 	@RequestMapping(value = "/revoke-token", method = RequestMethod.GET)
     @ResponseStatus(value=HttpStatus.OK)
     public void logout(HttpServletRequest request) {
@@ -145,6 +147,9 @@ public class DemoSsoOauth2ServerApplication extends WebMvcConfigurerAdapter {
 		private AuthenticationManager authenticationManager;
 		
 		@Autowired
+		protected DataSource dataSource;
+		
+		@Autowired
         private TokenStore tokenStore;
 		
 		@Override
@@ -167,7 +172,8 @@ public class DemoSsoOauth2ServerApplication extends WebMvcConfigurerAdapter {
 		
 		@Bean
 		public TokenStore tokenStore() {
-			return new InMemoryTokenStore();
+			//return new InMemoryTokenStore();
+			return new JdbcTokenStore(dataSource);
 		}
 	}	
 }
